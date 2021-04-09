@@ -1,0 +1,51 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 8080
+
+# 应用名称
+spring:
+  application:
+    name: spring-cloud-alibaba
+  datasource:
+    #创建表的MySql语句位置
+    schema: classpath:schema.sql
+    #插入数据的MySql语句的位置
+    data: classpath:data.sqle
+    url: jdbc:mysql://127.0.0.1:3306/qiangwen_test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    # Nacos帮助文档: https://nacos.io/zh-cn/docs/concepts.html
+    # Nacos认证信息
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+        # Nacos 服务发现与注册配置，其中子属性 server-addr 指定 Nacos 服务器主机和端口
+        server-addr: 127.0.0.1:8848
+        # 注册到 nacos 的指定 namespace，默认为 public
+        namespace: public
+    sentinel:
+      transport:
+        # Sentinel 控制台地址
+        dashboard: localhost:8080
+      # 取消Sentinel控制台懒加载
+      # 默认情况下 Sentinel 会在客户端首次调用的时候进行初始化，开始向控制台发送心跳包
+      # 配置 sentinel.eager=true 时，取消Sentinel控制台懒加载功能
+      eager: true
+      # 如果有多套网络，又无法正确获取本机IP，则需要使用下面的参数设置当前机器可被外部访问的IP地址，供admin控制台使用
+      # spring.cloud.sentinel.transport.client-ip=
+
+
+#下面这些内容是为了让MyBatis映射
+#指定Mybatis的Mapper文件
+mybatis:
+  mapper-locations: classpath:mappers/*xml
+#指定Mybatis的实体目录
+  type-aliases-package: com.chenzifeng.learn.springcloudalibaba.mybatis.entity
+
+
+
+
+

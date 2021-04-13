@@ -1,17 +1,17 @@
 # 应用服务 WEB 访问端口
 server:
-  port: 8080
+  port: 8081
 
 # 应用名称
 spring:
   application:
-    name: spring-cloud-alibaba
+    name: spring-cloud-alibaba-nacos
   datasource:
     #创建表的MySql语句位置
     schema: classpath:schema.sql
     #插入数据的MySql语句的位置
     data: classpath:data.sqle
-    url: jdbc:mysql://127.0.0.1:3306/qiangwen_test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/my_program?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver

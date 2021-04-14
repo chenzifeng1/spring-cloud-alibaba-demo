@@ -21,6 +21,7 @@ public class SpringCloudAlibabaApplication {
 
     /**
      * 服务、方法的限流规则
+     * 如果使用Sentinel的配置或者在这里配置了规则，那么使用dashboard就无法配置了
      */
     private static void initFlowRules(){
         List<FlowRule> rules = new ArrayList<>();

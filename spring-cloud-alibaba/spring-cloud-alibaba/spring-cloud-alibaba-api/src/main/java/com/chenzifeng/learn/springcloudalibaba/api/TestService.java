@@ -13,4 +13,11 @@ public interface TestService {
      * @return
      */
     String getBody();
+
+
+    /**
+     * 测试方法 线程数 限流
+     * @return
+     */
+    String limitByThreadNum() ;
 }

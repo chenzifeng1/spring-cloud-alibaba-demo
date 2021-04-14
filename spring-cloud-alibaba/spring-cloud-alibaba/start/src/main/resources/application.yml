@@ -27,6 +27,7 @@ spring:
         # 注册到 nacos 的指定 namespace，默认为 public
         namespace: public
     sentinel:
+      # 整合nacos,下发配置
       transport:
         # Sentinel 控制台地址 http端口
         dashboard: localhost:8080
@@ -36,6 +37,15 @@ spring:
       eager: true
       # 如果有多套网络，又无法正确获取本机IP，则需要使用下面的参数设置当前机器可被外部访问的IP地址，供admin控制台使用
       # spring.cloud.sentinel.transport.client-ip=
+#      datasource:
+#        ds:
+#          nacos:
+#            # nacos的服务地址
+#            server-addr: localhost:8848
+#            dataId:
+#            groupId:
+#            ruleType:
+
 
 
 #下面这些内容是为了让MyBatis映射

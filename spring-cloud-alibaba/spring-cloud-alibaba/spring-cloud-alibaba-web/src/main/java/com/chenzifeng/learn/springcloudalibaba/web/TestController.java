@@ -23,4 +23,9 @@ public class TestController {
 
         return testService.getBody();
     }
+
+    @RequestMapping("/t2")
+    public String t2(){
+        return testService.limitByThreadNum();
+    }
 }

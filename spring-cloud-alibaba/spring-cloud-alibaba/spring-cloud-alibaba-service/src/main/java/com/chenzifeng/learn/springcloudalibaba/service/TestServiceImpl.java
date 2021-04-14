@@ -6,6 +6,8 @@ import com.chenzifeng.learn.springcloudalibaba.api.StaticContract;
 import com.chenzifeng.learn.springcloudalibaba.api.TestService;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @Author: czf
  * @Description:
@@ -24,12 +26,35 @@ public class TestServiceImpl implements TestService {
         return "hello_world";
     }
 
+    @Override
+    @SentinelResource(value = "ThreadNum",blockHandler = "threadNumBlockHandler")
+    public String limitByThreadNum()  {
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName() + " 请求成功，执行业务逻辑");
+        return "请求成功，执行业务逻辑";
+    }
+
     /**
-     * 降级方法
+     *  QPS降级方法
      * @return
      */
     public String getBodyBack(BlockException e){
         return "blockHandler";
     }
+
+    /**
+     * 线程数降级
+     * @param e
+     * @return
+     */
+    public String threadNumBlockHandler(BlockException e){
+        System.out.println(Thread.currentThread().getName()+" 线程数不足，执行限流方法");
+        return "线程数限流方法";
+    }
+
 
 }

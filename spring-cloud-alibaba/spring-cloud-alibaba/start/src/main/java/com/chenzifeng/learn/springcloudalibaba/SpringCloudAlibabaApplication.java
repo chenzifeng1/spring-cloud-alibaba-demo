@@ -14,7 +14,7 @@ import java.util.List;
 public class SpringCloudAlibabaApplication {
 
     public static void main(String[] args) {
-        initFlowRules();
+//        initFlowRules();
         SpringApplication.run(SpringCloudAlibabaApplication.class, args);
     }
 

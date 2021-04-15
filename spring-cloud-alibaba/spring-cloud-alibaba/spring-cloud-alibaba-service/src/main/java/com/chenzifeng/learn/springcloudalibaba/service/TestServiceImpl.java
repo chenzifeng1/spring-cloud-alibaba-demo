@@ -38,6 +38,11 @@ public class TestServiceImpl implements TestService {
         return "请求成功，执行业务逻辑";
     }
 
+    @Override
+    public String degradeTest()  {
+       throw new RuntimeException("降级异常测试");
+    }
+
     /**
      *  QPS降级方法
      * @return

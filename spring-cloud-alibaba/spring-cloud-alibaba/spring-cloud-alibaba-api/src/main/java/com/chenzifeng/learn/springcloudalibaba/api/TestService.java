@@ -19,5 +19,12 @@ public interface TestService {
      * 测试方法 线程数 限流
      * @return
      */
-    String limitByThreadNum() ;
+    String limitByThreadNum();
+
+    /**
+     * 降级测试方法
+     * @return
+     */
+    String degradeTest() ;
+
 }

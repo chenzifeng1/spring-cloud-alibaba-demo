@@ -66,6 +66,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-gateway &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-gateway</artifactId>-->
+<!--            <version>2.2.7.RELEASE</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

@@ -14,20 +14,69 @@
 
 ## Nacos
 
-与Euraka不同的是，Nacos既可以作为服务注册中心，又可以作为配置中心。而且使用Nacos时是将官方提供的服务运行起来即可， 不需要我们手写一个Eureka的服务注册中心来等待服务注册。
+与Euraka不同的是，Nacos既可以作为服务注册中心，又可以作为配置中心。而且使用Nacos时是将官方提供的服务运行起来即可， 不需要我们手写一个Eureka的服务注册中心来等待服务注册。  
+[nacos官网](https://nacos.io/)
+
 
 ### 使用
 
 我们需要去git上下载Nacos [download](https://github.com/alibaba/nacos/releases) 。Windows的话下载`.zip`的版本，解压到本地即可。 运行的话，在nacos的`/bin`
-目录下由对应的cmd脚本。如果是自己学习的话记得编辑`startup.cmd`,将启动模式改为`standalone`,默认是`cluster`（集群模式）。 启动成功的界面如下：
+目录下由对应的cmd脚本。如果是自己学习的话记得编辑`startup.cmd`,将启动模式改为`standalone`,默认是`cluster`（集群模式）。 或者直接`cmd startup.cmd -m standalone`,这样也是以单机模式启动的。
+启动成功的界面如下：
 ![Nacos](./img/nacos_启动.png)
-启动之后访问[localhost]()
+启动之后访问[http://127.0.0.1:8848/nacos](http://127.0.0.1:8848/nacos)  
+- 登录用户名（默认）： nacos
+- 登录密码（默认）： nacos
 
-### 注册中心
 
-1. Nacos作为注册中心，
+### 注册中心 + 配置中心
 
-### 配置中心
+Nacos可以同事作为注册中心与配置中心,需要引入依赖:
+
+```xml
+<dependencies>
+   <!-- Nacos作为服务注册中心的依赖 -->
+  <dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+  </dependency>
+  <!-- Nacos作为配置中心的依赖  -->
+  <dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+  </dependency>
+  <!-- web服务 -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+  </dependency>
+</dependencies>
+```
+配置如下：
+```yaml
+# 应用服务 WEB 访问端口
+server:
+  port: 8081
+
+# 应用名称
+spring:
+  application:
+    name: spring-cloud-alibaba-nacos
+  cloud:
+  # Nacos帮助文档: https://nacos.io/zh-cn/docs/concepts.html
+  # Nacos认证信息
+  nacos:
+    # Nacos 服务发现与注册配置，其中子属性 server-addr 指定 Nacos 服务器主机和端口  这个也可以直接配置在discovery下，单独表明服务注册中心的服务地址
+    server-addr: 127.0.0.1:8848
+    discovery:
+      username: nacos
+      password: nacos
+```
+
+启动nacos服务：nacos服务是作为一个单独的服务器存在的，在使用前我们需要将该服务启动。启动方法见上文。
+
+
+
 
 ## Sentinel
 
@@ -58,7 +107,8 @@
 
 - 限流是限制所有请求访问，是无状态的
 - 如果是限制`用户`的方法，比如说限制某个用户的访问次数，这个更像是拒绝策略，手段是可以在redis中设置用户的计数器，每次该用户的请求进来时计数器+1 限流方式：
-    1. 网关限流：所有请求通过网关进行限流，比如说对某个API的并发量要求是100，那么在网关层对该API进行拦截，超过100就走降级方法。这样做不会管每个节点能承受多少流量，只关心有多少流量能到API上。这种方法限制的是网络资源，主要是看网卡的吞吐量
+    1.
+    网关限流：所有请求通过网关进行限流，比如说对某个API的并发量要求是100，那么在网关层对该API进行拦截，超过100就走降级方法。这样做不会管每个节点能承受多少流量，只关心有多少流量能到API上。这种方法限制的是网络资源，主要是看网卡的吞吐量
     2. 服务限流：每个节点记录
 
 ### 降级规则

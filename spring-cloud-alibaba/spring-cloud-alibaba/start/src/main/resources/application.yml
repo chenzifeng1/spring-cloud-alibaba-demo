@@ -4,8 +4,7 @@ server:
 
 # 应用名称
 spring:
-  application:
-    name: spring-cloud-alibaba-nacos
+
   datasource:
     #创建表的MySql语句位置
     schema: classpath:schema.sql
@@ -20,7 +19,7 @@ spring:
     # Nacos认证信息
     nacos:
       # Nacos 服务发现与注册配置，其中子属性 server-addr 指定 Nacos 服务器主机和端口
-      server-addr: 127.0.0.1:8848
+      server-addr:
       discovery:
         username: nacos
         password: nacos

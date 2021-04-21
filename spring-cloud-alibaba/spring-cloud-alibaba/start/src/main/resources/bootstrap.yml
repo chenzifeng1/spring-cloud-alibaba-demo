@@ -1,3 +1,8 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 8081
+
+
 spring:
   cloud:
     nacos:
@@ -7,3 +12,5 @@ spring:
         file-extension: yaml
   application:
     name: spring-cloud-alibaba-nacos
+mytest:
+  str: "test"

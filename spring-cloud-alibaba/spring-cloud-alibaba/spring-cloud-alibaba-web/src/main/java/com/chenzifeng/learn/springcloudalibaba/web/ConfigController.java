@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Version: 1.0
  **/
 @RestController
+
 public class ConfigController {
     private ConfigService configService;
 
@@ -20,6 +21,11 @@ public class ConfigController {
     public String getConfig() {
         configService.refreshConfig();
         return "user: " + configService.getUsername() + " age: " + configService.getAge();
+    }
+
+    @GetMapping("/getUsername")
+    public String getUsername(){
+         return configService.getUsernameFromAnnotation();
     }
 
     @Autowired

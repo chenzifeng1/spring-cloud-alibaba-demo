@@ -10,7 +10,7 @@ spring:
         username: nacos
         password: nacos
         # Nacos 服务发现与注册配置，其中子属性 server-addr 指定 Nacos 服务器主机和端口
-        server-addr: 'localhost:8848'
+        server-addr: localhost:8848
 
 # Nacos帮助文档: https://nacos.io/zh-cn/docs/concepts.html
 # Nacos认证信息

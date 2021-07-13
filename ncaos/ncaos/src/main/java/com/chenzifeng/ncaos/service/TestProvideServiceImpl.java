@@ -1,4 +1,4 @@
-package com.chenzifeng.service;
+package com.chenzifeng.ncaos.service;
 
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class TestProvideServiceImpl implements TestProvideService{
     @Override
     public String test1() {
-        return "service provider : hello world!";
+        int a = 1/ 0;
+        return "service provider-1 : hello world!";
     }
 }

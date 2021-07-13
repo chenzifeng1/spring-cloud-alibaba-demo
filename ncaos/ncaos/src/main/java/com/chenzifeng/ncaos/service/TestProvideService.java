@@ -1,4 +1,4 @@
-package com.chenzifeng.service;
+package com.chenzifeng.ncaos.service;
 
 /**
  * @Author: czf

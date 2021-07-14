@@ -1,5 +1,6 @@
-package com.chenzifeng.serverconsumer.demos.nacosdiscoveryconsumer;
+package com.chenzifeng.serverconsumer.demos.nacosdiscoveryconsumer.service;
 
+import com.chenzifeng.serverconsumer.demos.nacosdiscoveryconsumer.service.fallback.FallbackTestImpl;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Version: 1.0
  **/
 
-@FeignClient(name="nacos",fallbackFactory = FallbackTestImpl.class,configuration = FeignConfiguration.class)
+@FeignClient(name="nacos",fallback = FallbackTestImpl.class)
 public interface TestProvideService {
 
     /**
@@ -19,4 +20,5 @@ public interface TestProvideService {
      */
     @GetMapping("/test/t1")
     String test1();
+
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class TestProvideServiceImpl implements TestProvideService{
     @Override
     public String test1() {
-        int a = 1/ 0;
+//        int a = 1/ 0;
         return "service provider-1 : hello world!";
     }
 }

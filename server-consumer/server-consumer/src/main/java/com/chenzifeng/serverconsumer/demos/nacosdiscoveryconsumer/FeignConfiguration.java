@@ -9,10 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2021-07-13 17:26
  * @Version: 1.0
  **/
-@Configuration
+
 public class FeignConfiguration {
-    @Bean
-    public FallbackTestImpl fallbackTestImpl(){
-        return new FallbackTestImpl();
-    }
+
 }

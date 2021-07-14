@@ -14,32 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package com.chenzifeng.serverconsumer.demos.nacosdiscoveryconsumer;
+package com.chenzifeng.serverconsumer.demos.nacosdiscoveryconsumer.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-@RestController
-public class RestTemplateController {
+/**
+ *  指向服务提供者应用
+ */
+//@FeignClient("nacos")
+public interface EchoService {
 
-    @LoadBalanced
-    @Autowired
-    public RestTemplate restTemplate;
+    @GetMapping("/test/t1")
+    String testT1();
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @GetMapping("/call/echo/{message}")
-    public String callEcho(@PathVariable String message) {
-        // 访问应用 nacos-discovery-provider-sample 的 REST "/echo/{message}"
-        return restTemplate.getForObject("http://nacos-discovery-provider-sample/echo/" + message, String.class);
-    }
 }

@@ -9,9 +9,10 @@ import org.springframework.stereotype.Component;
  * @Version: 1.0
  **/
 
+@Component
 public class FallBackHandler {
 
-    public String openFeignTest() {
+    public  String openFeignTest() {
         return "发生异常，进行降级容错";
     }
 }

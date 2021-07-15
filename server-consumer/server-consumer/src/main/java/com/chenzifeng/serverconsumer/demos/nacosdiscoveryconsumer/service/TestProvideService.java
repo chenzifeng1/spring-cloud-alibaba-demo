@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @Version: 1.0
  **/
 
-@FeignClient(name="nacos",fallback = FallbackTestImpl.class)
+@FeignClient(name="service-provider")
 public interface TestProvideService {
 
     /**

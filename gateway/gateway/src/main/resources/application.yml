@@ -1,0 +1,28 @@
+server:
+  port: 8010
+spring:
+  application:
+    name: spring-cloud-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.237:8848
+        password: nacos
+        username: nacos
+    gateway:
+      enabled: true
+      discovery:
+        locator:
+          lower-case-service-id: true
+      routes:
+        # id是对应多种路由规则的
+        - id: czf_test
+          uri: https://localhost:9100/
+          predicates:
+            - Path=/gateway/**
+        - id: httpbin_route
+          uri: https://httpbin.org
+          predicates:
+            - Path=/httpbin/**
+          filters:
+            - RewritePath=/httpbin/(?<segment>.*), /$\{segment}

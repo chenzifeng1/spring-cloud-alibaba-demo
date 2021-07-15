@@ -8,4 +8,12 @@ public interface OpenFeignService {
      * @return
      */
     public String openFeignTest();
+
+    /**
+     *
+     * @return
+     */
+    public String openFeignTest1();
+
+
 }

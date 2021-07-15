@@ -22,9 +22,22 @@ public class OpenFeignServiceImpl  implements OpenFeignService {
     TestProvideService testProvideService;
 
     @Override
-    @SentinelResource(value = "openFeign",fallbackClass = FallBackHandler.class,blockHandlerClass = ConsumerBlockHandler.class)
+    @SentinelResource(value = "openFeign",fallback = "fallbackMethod",blockHandler = "blockResponse")
     public String openFeignTest() {
-
         return testProvideService.test1();
     }
+
+    public String fallbackMethod() {
+        return "这是在方法层面的进行的fallback";
+    }
+
+    public String blockResponse(){return "blocked";}
+
+    @SentinelResource(value = "openFeign1",fallback = "fallbackMethod",blockHandlerClass = ConsumerBlockHandler.class)
+    @Override
+    public String openFeignTest1() {
+        int i = 1/0;
+        return testProvideService.test1();
+    }
+
 }

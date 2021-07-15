@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/feign")
+@RequestMapping("/gateway/feign")
 public class OpenFeignController {
 
     static {
@@ -50,7 +50,6 @@ public class OpenFeignController {
     @GetMapping("/test")
     public String feignEcho() throws InterruptedException {
         System.out.println("----------消费者开始消费----------");
-        Thread.sleep(1000);
         return openFeignService.openFeignTest();
     }
 

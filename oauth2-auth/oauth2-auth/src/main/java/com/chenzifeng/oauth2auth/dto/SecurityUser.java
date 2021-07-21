@@ -38,8 +38,14 @@ public class SecurityUser implements UserDetails {
     /**
      * 权限数据
      */
-    private Collection<SimpleGrantedAuthority> authorities;
+    private Collection<GrantedAuthority> authorities;
 
+
+    public SecurityUser(String username, String password,Collection<GrantedAuthority> authorities) {
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
 
     public SecurityUser(UserDTO userDTO) {
         this.setId(userDTO.getId());

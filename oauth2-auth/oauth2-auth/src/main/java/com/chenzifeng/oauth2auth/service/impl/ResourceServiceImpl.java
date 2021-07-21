@@ -1,6 +1,7 @@
 package com.chenzifeng.oauth2auth.service.impl;
 
 import com.chenzifeng.oauth2auth.constant.RedisConstant;
+import com.chenzifeng.oauth2auth.utils.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

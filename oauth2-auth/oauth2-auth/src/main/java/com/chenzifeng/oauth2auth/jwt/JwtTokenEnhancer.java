@@ -15,6 +15,7 @@ import java.util.HashMap;
  * 向jwt的token中加入一些自定义的信息
  * @Version: 1.0
  **/
+
 public class JwtTokenEnhancer implements TokenEnhancer {
 
     @Override

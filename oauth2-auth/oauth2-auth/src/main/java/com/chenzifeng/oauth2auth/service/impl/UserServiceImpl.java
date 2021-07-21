@@ -8,12 +8,15 @@ import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,9 +30,19 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserDetailsService {
 
-    private List<UserDTO> userList;
+    private List<SecurityUser> userList;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+    @PostConstruct
+    public void initData() {
+        String password = passwordEncoder.encode("123456");
+        userList = new ArrayList<>();
+        userList.add(new SecurityUser("macro", password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin")));
+        userList.add(new SecurityUser("andy", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
+        userList.add(new SecurityUser("mark", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
+    }
 
 
     /**
@@ -40,11 +53,11 @@ public class UserServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        List<UserDTO> collect = userList.stream().filter(item -> item.getUsername().equals(s)).collect(Collectors.toList());
+        List<SecurityUser> collect = userList.stream().filter(item -> item.getUsername().equals(s)).collect(Collectors.toList());
         if(collect.isEmpty()){
             throw new UsernameNotFoundException("未找到用户信息");
         }
-        SecurityUser securityUser = new SecurityUser(collect.get(0));
+        SecurityUser securityUser = collect.get(0);
         if(!securityUser.getEnabled()){
             throw new DisabledException(MessageConstant.ACCOUNT_DISABLED);
         }

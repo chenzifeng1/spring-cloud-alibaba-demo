@@ -5,6 +5,7 @@ import com.chenzifeng.oauth2auth.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
@@ -40,62 +42,60 @@ import java.util.List;
 @EnableAuthorizationServer
 public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    // fixme 这里不会出问题吗 感觉需要注入
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenEnhancer jwtTokenEnhancer;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.allowFormAuthenticationForClients();
-    }
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+//    @Qualifier("redisTokenStore")
+    @Qualifier("jwtTokenStore")
+    private TokenStore tokenStore;
+    @Autowired
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
+    @Autowired
+    private JwtTokenEnhancer jwtTokenEnhancer;
 
     /**
-     * 声明单个客户端及其属性
-     * @param clients
-     * @throws Exception
+     * 使用密码模式需要配置
      */
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+        List<TokenEnhancer> delegates = new ArrayList<>();
+        delegates.add(jwtTokenEnhancer); //配置JWT的内容增强器
+        delegates.add(jwtAccessTokenConverter);
+        enhancerChain.setTokenEnhancers(delegates);
+        endpoints.authenticationManager(authenticationManager)
+                .userDetailsService(userService)
+                .tokenStore(tokenStore) //配置令牌存储策略
+                .accessTokenConverter(jwtAccessTokenConverter)
+                .tokenEnhancer(enhancerChain);
+    }
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("client-app")
-                .secret(passwordEncoder.encode("123456"))
-                .scopes("all")
-                // 授权类型
-                .authorizedGrantTypes("password","refresh_token")
-                // token有效时间
+                .withClient("admin")
+                .secret(passwordEncoder.encode("admin123456"))
                 .accessTokenValiditySeconds(3600)
-                // 刷新令牌有效期秒
-                .refreshTokenValiditySeconds(86400);
+                .refreshTokenValiditySeconds(864000)
+//                .redirectUris("http://www.baidu.com")
+                .redirectUris("http://localhost:9501/login") //单点登录时配置
+                .autoApprove(true) //自动授权配置
+                .scopes("all")
+                .authorizedGrantTypes("authorization_code","password","refresh_token");
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-
-        List<TokenEnhancer> delegates = new ArrayList<>();
-        delegates.add(jwtTokenEnhancer);
-        delegates.add(jwtAccessTokenConverter());
-        //配置JWT的内容增强器
-        tokenEnhancerChain.setTokenEnhancers(delegates);
-        endpoints.authenticationManager(authenticationManager)
-                // 配置加载用户信息的服务
-                .userDetailsService(userDetailsService)
-                .accessTokenConverter(jwtAccessTokenConverter())
-                // 设置配置好的token增强器
-                .tokenEnhancer(tokenEnhancerChain);
-
+    public void configure(AuthorizationServerSecurityConfigurer security) {
+        security.tokenKeyAccess("isAuthenticated()"); // 获取密钥需要身份认证，使用单点登录时必须配置
     }
 
-
-    @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter(){
-        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setKeyPair(keyPair());
-        return jwtAccessTokenConverter;
-    }
 
     @Bean
     public KeyPair keyPair() {

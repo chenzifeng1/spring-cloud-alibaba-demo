@@ -4,11 +4,8 @@ spring:
   profiles:
     active: dev
   application:
-    name: micro-oauth2-auth
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.0.237:8848
+    name: oauth2-auth
+
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   redis:
@@ -16,6 +13,10 @@ spring:
     port: 6379
     host: 192.168.0.237
     password: 123456
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.237:8848
 management:
   endpoints:
     web:

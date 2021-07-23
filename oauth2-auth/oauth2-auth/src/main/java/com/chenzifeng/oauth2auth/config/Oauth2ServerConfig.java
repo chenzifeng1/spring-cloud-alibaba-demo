@@ -1,6 +1,7 @@
 package com.chenzifeng.oauth2auth.config;
 
 import com.chenzifeng.oauth2auth.jwt.JwtTokenEnhancer;
+import com.chenzifeng.oauth2auth.service.impl.ClientDetailsServiceImpl;
 import com.chenzifeng.oauth2auth.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,12 +19,14 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
 
+import javax.sql.DataSource;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,66 +45,63 @@ import java.util.List;
 @EnableAuthorizationServer
 public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final UserServiceImpl userDetailsService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenEnhancer jwtTokenEnhancer;
+    private final DataSource dataSource;
+    private final ClientDetailsService clientDetailsService;
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-//    @Qualifier("redisTokenStore")
-    @Qualifier("jwtTokenStore")
-    private TokenStore tokenStore;
-    @Autowired
-    private JwtAccessTokenConverter jwtAccessTokenConverter;
-    @Autowired
-    private JwtTokenEnhancer jwtTokenEnhancer;
-
-    /**
-     * 使用密码模式需要配置
-     */
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        // 这里是把客户端的信息存到内存中去，但是我们实际开发中，要么存缓存要么直接从数据库拿
+        clients.inMemory()
+                //client_id参数让 授权服务器 知道是谁在请求
+                .withClient("client-app")
+                .secret(passwordEncoder.encode("123456"))
+                .scopes("all")
+                .authorizedGrantTypes("password", "refresh_token")
+                .accessTokenValiditySeconds(3600)
+                .refreshTokenValiditySeconds(86400);
+
+        // 这里是使用自己定义的客户端处理方法
+//        clients.withClientDetails(clientDetailsService);
+
+    }
+
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
         List<TokenEnhancer> delegates = new ArrayList<>();
-        delegates.add(jwtTokenEnhancer); //配置JWT的内容增强器
-        delegates.add(jwtAccessTokenConverter);
+        delegates.add(jwtTokenEnhancer);
+        delegates.add(accessTokenConverter());
+        //配置JWT的内容增强器
         enhancerChain.setTokenEnhancers(delegates);
         endpoints.authenticationManager(authenticationManager)
-                .userDetailsService(userService)
-                .tokenStore(tokenStore) //配置令牌存储策略
-                .accessTokenConverter(jwtAccessTokenConverter)
+                //配置加载用户信息的服务
+                .userDetailsService(userDetailsService)
+                .accessTokenConverter(accessTokenConverter())
                 .tokenEnhancer(enhancerChain);
     }
 
     @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("admin")
-                .secret(passwordEncoder.encode("admin123456"))
-                .accessTokenValiditySeconds(3600)
-                .refreshTokenValiditySeconds(864000)
-//                .redirectUris("http://www.baidu.com")
-                .redirectUris("http://localhost:9501/login") //单点登录时配置
-                .autoApprove(true) //自动授权配置
-                .scopes("all")
-                .authorizedGrantTypes("authorization_code","password","refresh_token");
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.allowFormAuthenticationForClients();
     }
 
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) {
-        security.tokenKeyAccess("isAuthenticated()"); // 获取密钥需要身份认证，使用单点登录时必须配置
+    @Bean
+    public JwtAccessTokenConverter accessTokenConverter() {
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setKeyPair(keyPair());
+        return jwtAccessTokenConverter;
     }
-
 
     @Bean
     public KeyPair keyPair() {
         //从classpath下的证书中获取秘钥对
-        KeyStoreKeyFactory keyPair = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"),"123456".toCharArray());
-        return keyPair.getKeyPair("jwt","123456".toCharArray());
+        org.springframework.security.rsa.crypto.KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("jwt.jks"), "123456".toCharArray());
+        return keyStoreKeyFactory.getKeyPair("jwt", "123456".toCharArray());
     }
 
 }

@@ -25,8 +25,10 @@ spring:
             - StripPrefix=1
       discovery:
         locator:
-          enabled: true #开启从注册中心动态创建路由的功能
-          lower-case-service-id: true #使用小写服务名，默认是大写
+          # 这个可以从注册中心把服务拉到本地，动态生成路由 配置这个之后，上面的断言就不需要配置了，访问路径会被映射成 ip/server_name/path
+          enabled: true
+          #使用小写服务名，默认是大写
+          lower-case-service-id: true
   security:
     oauth2:
       resourceserver:

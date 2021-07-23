@@ -27,7 +27,9 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+
         if (StrUtil.isEmpty(token)) {
+            // 如果token是”“ 把exchange交给下一个过滤器
             return chain.filter(exchange);
         }
         try {

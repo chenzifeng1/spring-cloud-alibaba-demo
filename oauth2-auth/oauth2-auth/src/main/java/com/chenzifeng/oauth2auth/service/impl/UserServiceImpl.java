@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserDetailsService {
     public void initData() {
         String password = passwordEncoder.encode("123456");
         userList = new ArrayList<>();
-        userList.add(new SecurityUser("macro", password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin")));
-        userList.add(new SecurityUser("andy", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
-        userList.add(new SecurityUser("mark", password, AuthorityUtils.commaSeparatedStringToAuthorityList("client")));
+        userList.add(new SecurityUser("macro", password, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN")));
+        userList.add(new SecurityUser("andy", password, AuthorityUtils.commaSeparatedStringToAuthorityList("CLIENT")));
+        userList.add(new SecurityUser("mark", password, AuthorityUtils.commaSeparatedStringToAuthorityList("CLIENT")));
     }
 
 

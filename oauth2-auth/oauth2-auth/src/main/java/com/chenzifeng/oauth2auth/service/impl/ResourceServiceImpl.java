@@ -33,7 +33,7 @@ public class ResourceServiceImpl {
     public void initData(){
         resourceRolesMap = new TreeMap<>();
         resourceRolesMap.put("/api/hello", CollUtil.toList("ADMIN"));
-        resourceRolesMap.put("/api/user/currentUser", CollUtil.toList("ADMIN", "TEST"));
+        resourceRolesMap.put("/api/user/currentUser", CollUtil.toList("ADMIN", "TEST","CLIENT"));
         redisTemplate.opsForHash().putAll(RedisConstant.RESOURCE_ROLES_MAP, resourceRolesMap);
 
     }

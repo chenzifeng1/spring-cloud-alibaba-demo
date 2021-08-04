@@ -35,7 +35,7 @@ import java.util.List;
  * @Author: czf
  * @Description:
  * @Date: 2021-07-16 15:01
- *
+ * <p>
  * 添加认证服务相关配置Oauth2ServerConfig，需要配置加载用户信息的服务UserServiceImpl及RSA的钥匙对KeyPair；
  * @Version: 1.0
  **/
@@ -50,8 +50,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     private final UserServiceImpl userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenEnhancer jwtTokenEnhancer;
-    private final DataSource dataSource;
-    private final ClientDetailsService clientDetailsService;
+
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -65,8 +64,10 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                 .accessTokenValiditySeconds(3600)
                 .refreshTokenValiditySeconds(86400);
 
-        // 这里是使用自己定义的客户端处理方法
-//        clients.withClientDetails(clientDetailsService);
+        // 这里是使用自己定义的客户端处理方法 比如说可以从redis中拿
+        // clients.withClientDetails(clientDetailsService);
+        // 或者我们可以从数据库中获取 具体调用方法可以去查一下，这里只是写一下，表示有通过jdbc来获取的方法
+        //clients.jdbc().dataSource().passwordEncoder()
 
     }
 

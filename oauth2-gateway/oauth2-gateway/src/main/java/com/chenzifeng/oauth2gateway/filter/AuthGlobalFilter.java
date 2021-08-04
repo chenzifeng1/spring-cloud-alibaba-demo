@@ -47,6 +47,10 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     }
 
+    /**
+     * 这个是过滤器的优先级，数字越小，优先级越高
+     * @return
+     */
     @Override
     public int getOrder() {
         return 0;

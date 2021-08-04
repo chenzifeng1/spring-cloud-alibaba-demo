@@ -1,5 +1,6 @@
 package com.chenzifeng.oauth2auth.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.chenzifeng.oauth2auth.constant.MessageConstant;
 import com.chenzifeng.oauth2auth.dto.SecurityUser;
 import com.chenzifeng.oauth2auth.dto.UserDTO;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserDetailsService {
 
-    private List<SecurityUser> userList;
+    private List<UserDTO> userList;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -39,9 +40,8 @@ public class UserServiceImpl implements UserDetailsService {
     public void initData() {
         String password = passwordEncoder.encode("123456");
         userList = new ArrayList<>();
-        userList.add(new SecurityUser("macro", password, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN")));
-        userList.add(new SecurityUser("andy", password, AuthorityUtils.commaSeparatedStringToAuthorityList("CLIENT")));
-        userList.add(new SecurityUser("mark", password, AuthorityUtils.commaSeparatedStringToAuthorityList("CLIENT")));
+        userList.add(new UserDTO(1L,"macro", password,1, CollUtil.toList("ADMIN")));
+        userList.add(new UserDTO(2L,"andy", password,1, CollUtil.toList("TEST")));
     }
 
 
@@ -53,11 +53,11 @@ public class UserServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        List<SecurityUser> collect = userList.stream().filter(item -> item.getUsername().equals(s)).collect(Collectors.toList());
-        if(collect.isEmpty()){
+        List<UserDTO> findUserList = userList.stream().filter(item -> item.getUsername().equals(s)).collect(Collectors.toList());
+        if(findUserList.isEmpty()){
             throw new UsernameNotFoundException("未找到用户信息");
         }
-        SecurityUser securityUser = collect.get(0);
+        SecurityUser securityUser =new SecurityUser(findUserList.get(0));
         if(!securityUser.getEnabled()){
             throw new DisabledException(MessageConstant.ACCOUNT_DISABLED);
         }
